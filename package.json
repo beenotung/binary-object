@@ -3,12 +3,13 @@
   "version": "0.0.1",
   "description": "Encode json objects into a binary format. Inspired by msgpack. With reduces memory usage.",
   "keywords": [
-    "msg-pack",
-    "json",
     "object",
     "binary",
     "encode",
-    "decode"
+    "decode",
+    "json",
+    "msgpack",
+    "BON"
   ],
   "author": "Beeno Tung <aabbcc1241@yahoo.com.hk> (https://beeno-tung.surge.sh)",
   "license": "BSD-2-Clause",
