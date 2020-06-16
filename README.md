@@ -5,6 +5,26 @@ Inspired by msgpack. With reduces memory usage.
 
 [![npm Package Version](https://img.shields.io/npm/v/binary-object.svg?maxAge=3600)](https://www.npmjs.com/package/binary-object)
 
+## Features
+- Encode any value to binary format (and decode back)
+- Memory-efficient
+
+Wide range of javascript data type are supported:
+- string
+- number
+- bigint
+- boolean
+- Buffer
+- Array
+- Map
+- Set
+- Date
+- object
+- symbol
+- function
+- undefined
+- null
+
 ## Why not MsgPack?
 MsgPack cannot reclaim the memory usage.
 
