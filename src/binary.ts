@@ -1,6 +1,21 @@
 import { decode as decode_helper } from './decode'
 import { BufferResult } from './encode'
 import { encode as encode_helper } from './encode'
+import { Sink } from './pipe'
+
+export interface BinarySink {
+  write(byte: number): void
+
+  writeBatch(bytes: number[]): void
+
+  writeBuffer(buffer: Buffer, offset: number, byteLength: number): void
+}
+
+export class BinaryObjectSink extends Sink<any> {
+  write(data: any) {
+    // TODO
+  }
+}
 
 let _pool = Buffer.alloc(1)
 
