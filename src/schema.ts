@@ -1,6 +1,6 @@
 import { Sink, Source } from './pipe'
 
-const Type = {
+export const Type = {
   Array: 1,
   Schema: 2,
   Object: 3,
@@ -73,7 +73,7 @@ function decodeSchema(schemas: string[][], data: any[]) {
   return res
 }
 
-function read(source: Source<any>, schemas: string[][]) {
+function read(source: Source<any>, schemas: string[][]): any {
   const data = source.read()
   if (data === null || typeof data !== 'object') {
     return data
