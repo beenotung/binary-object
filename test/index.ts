@@ -58,7 +58,7 @@ export function test() {
     const result = decode(res.buffer, res.byteLength)
     console.log('result:', result)
 
-    let isMatch = match(data, result)
+    const isMatch = match(data, result)
     console.log('match:', isMatch)
     if (!isMatch) {
       throw new Error('not match')

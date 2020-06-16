@@ -9,7 +9,10 @@ export function* iterateSamples() {
   let mode = Type.Key
   let key: string = ''
   let value: any
-  for (const string of fs.readFileSync('res/sample.txt').toString().split('\n')) {
+  for (const string of fs
+    .readFileSync('res/sample.txt')
+    .toString()
+    .split('\n')) {
     switch (mode) {
       case Type.Key:
         key = JSON.parse(string)
