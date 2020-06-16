@@ -1,13 +1,16 @@
 {
   "name": "binary-object",
-  "version": "1.0.0",
-  "description": "[![npm Package Version](https://img.shields.io/npm/v/@beenotung/tslib.svg?maxAge=3600)](https://www.npmjs.com/package/@beenotung/tslib)",
-  "keywords": [],
-  "author": {
-    "name": "Beeno Tung",
-    "email": "aabbcc1241@yahoo.com.hk",
-    "url": "https://beeno-tung.surge.sh"
-  },
+  "version": "0.0.1",
+  "description": "Encode json objects into a binary format. Inspired by msgpack. With reduces memory usage.",
+  "keywords": [
+    "msg-pack",
+    "json",
+    "object",
+    "binary",
+    "encode",
+    "decode"
+  ],
+  "author": "Beeno Tung <aabbcc1241@yahoo.com.hk> (https://beeno-tung.surge.sh)",
   "license": "BSD-2-Clause",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -19,7 +22,7 @@
     "prebuild": "npm run clean",
     "build": "tsc -p tsconfig.build.json",
     "pretest": "npm run format && npm run build",
-    "rawtest": "ts-node test/index.ts",
+    "rawtest": "ts-node test/index.ts || true",
     "prepublishOnly": "npm run rawtest && npm run build"
   },
   "husky": {
@@ -42,7 +45,6 @@
     "dist"
   ],
   "dependencies": {
-    "@beenotung/tslib": "^16.22.1",
     "tslib": "^2.0.0"
   },
   "devDependencies": {
