@@ -17,8 +17,8 @@ export class BinaryFileSink extends Sink<any> {
     super.close()
   }
 
-  static fromFile(file: string) {
-    const fileSink = FileSink.fromFile(file)
+  static fromFile(file: string, flags?: string) {
+    const fileSink = FileSink.fromFile(file, flags)
     const binaryObjectSink = new BinaryObjectSink(fileSink)
     return new BinaryFileSink(binaryObjectSink)
   }

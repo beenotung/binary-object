@@ -24,9 +24,9 @@ export class FileSink implements BinarySink {
     fs.closeSync(this.fd)
   }
 
-  static fromFile(file: string) {
+  static fromFile(file: string, flags = 'a') {
     fs.writeFileSync(file, '')
-    const fd = fs.openSync(file, 'as')
+    const fd = fs.openSync(file, flags)
     return new FileSink(fd)
   }
 }
