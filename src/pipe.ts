@@ -7,7 +7,9 @@ export abstract class Sink<T> {
     }
   }
 
-  close(): void {}
+  close(): void {
+    // override this method to close file/socket
+  }
 }
 
 export abstract class Source<T> {
@@ -21,5 +23,7 @@ export abstract class Source<T> {
     return res
   }
 
-  close(): void {}
+  close(): void {
+    // override this method to close file/socket
+  }
 }

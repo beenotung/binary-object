@@ -306,9 +306,11 @@ function decodeUtf8String(source: BinarySource): string {
   return source.readString(byteLength, 'utf8')
 }
 
-// FIXME use specific parsing to prevent XSS
+// tslint:disable-next-line:ban-types
 function decodeUtf8Function(source: BinarySource): Function {
   const data = decodeUtf8String(source)
+  // FIXME use specific parsing to prevent XSS
+  // tslint:disable-next-line:no-eval
   const func = eval('(' + data + ')')
   const type = typeof func
   if (type !== 'function') {
