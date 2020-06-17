@@ -1,10 +1,9 @@
-
 import { BinaryFileSink, BinaryFileSource } from './binary-file'
 import { End } from './binary-object'
 import { SchemaSink, SchemaSource } from './schema'
 
 export namespace SchemaFileSink {
-  export function fromFrom(file: string, flags?: string) {
+  export function fromFile(file: string, flags?: string) {
     const binaryObjectSink = BinaryFileSink.fromFile(file, flags)
     const schemaSink = new SchemaSink(binaryObjectSink)
     // return new SchemaFileSink(schemaSink)
@@ -13,7 +12,7 @@ export namespace SchemaFileSink {
 }
 
 export namespace SchemaFileSource {
-  export function fromFrom(file: string, flags?: string) {
+  export function fromFile(file: string, flags?: string) {
     const binaryFileSource = BinaryFileSource.fromFile(file, flags)
     const schemaSource = new SchemaSource(binaryFileSource)
     // return new SchemaFileSource(schemaSource)
