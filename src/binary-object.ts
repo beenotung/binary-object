@@ -87,13 +87,13 @@ function encodeUInt(sink: BinarySink, data: number) {
   }
   if (data < 2 ** 16) {
     numberBuffer[0] = Types.UInt16BE
-    numberBuffer.writeInt16BE(data, 1)
+    numberBuffer.writeUInt16BE(data, 1)
     sink.writeBuffer(numberBuffer, 0, 1 + 2)
     return
   }
   if (data < 2 ** 32) {
     numberBuffer[0] = Types.UInt32BE
-    numberBuffer.writeInt32BE(data, 1)
+    numberBuffer.writeUInt32BE(data, 1)
     sink.writeBuffer(numberBuffer, 0, 1 + 4)
     return
   }
