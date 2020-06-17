@@ -1,40 +1,27 @@
-import { decode as decode_helper } from './decode'
-import { BufferResult } from './encode'
-import { encode as encode_helper } from './encode'
-import { Sink } from './pipe'
-
 export interface BinarySink {
   write(byte: number): void
 
   writeBatch(bytes: number[]): void
 
   writeBuffer(buffer: Buffer, offset: number, byteLength: number): void
+
+  writeString(string: string, encoding: BufferEncoding): void
 }
 
-export class BinaryObjectSink extends Sink<any> {
-  write(data: any) {
-    // TODO
-  }
-}
+export interface BinarySource {
+  read(): number
 
-let _pool = Buffer.alloc(1)
+  /**
+   * may be pooled and shared
+   * */
+  readBatch(byteLength: number): Buffer
 
-export function clearPool() {
-  _pool = Buffer.alloc(1)
-}
+  /**
+   * must be offset 0 and with enough length
+   *
+   * will not auto resize
+   * */
+  readBuffer(byteLength: number, buffer: Buffer): void
 
-export function encode(data: any, pool = _pool): BufferResult {
-  const res = encode_helper(data, pool, 0)
-  _pool = res.buffer
-  return res
-}
-
-export function decode(
-  buffer: Buffer,
-  byteLength: number = buffer.length,
-): any {
-  if (buffer.length > _pool.length) {
-    _pool = buffer
-  }
-  return decode_helper(buffer, byteLength)
+  readString(byteLength: number, encoding: BufferEncoding): string
 }
