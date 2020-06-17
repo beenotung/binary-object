@@ -27,6 +27,7 @@ export let samples: Sample[] = [
     },
   ],
   [Types.Utf8Symbol, Symbol.for('sym')],
+  [Types.DateUInt64BE, new Date()],
   [Types.Map, new Map([[42, 'val']])],
   [Types.Set, new Set([42])],
   [Types.Buffer, Buffer.from([65, 66, 67])],

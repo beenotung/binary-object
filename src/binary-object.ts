@@ -217,7 +217,6 @@ function encode(sink: BinarySink, data: any) {
         break
       }
       if (data instanceof Date) {
-        sink.write(Types.DateUInt64BE)
         encodeUInt64BE(sink, Types.DateUInt64BE, data.getTime())
         break
       }
@@ -289,6 +288,14 @@ export class BinaryObjectSink extends Sink<any> {
     encode(this.sink, End)
     this.sink.close()
   }
+}
+
+function decodeUInt64BE(source: BinarySource): number {
+  source.readBuffer(8, numberBuffer)
+  const data = numberBuffer.readBigUInt64BE()
+  const number = Number(data)
+  console.log({ data, number })
+  return number
 }
 
 export function decodeNumber(source: BinarySource): number {
@@ -424,7 +431,7 @@ function decode(source: BinarySource): any {
     case Types.Utf8Symbol:
       return Symbol.for(decodeUtf8String(source))
     case Types.DateUInt64BE:
-      return new Date(decodeNumber(source))
+      return new Date(decodeUInt64BE(source))
     case Types.Map:
       return decodeMap(source)
     case Types.Set:
@@ -462,10 +469,13 @@ export class BinaryObjectSource extends Source<any> {
     this.source.close()
   }
 
-  *iterator() {
+  *iterator(options?: { autoClose?: boolean }) {
     for (;;) {
       const data = this.read()
       if (data === End) {
+        if (options?.autoClose) {
+          this.close()
+        }
         return
       }
       yield data

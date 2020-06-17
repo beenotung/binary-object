@@ -52,10 +52,13 @@ export class BinaryJsonSource extends Source<any> {
     this.source.close()
   }
 
-  *iterator() {
+  *iterator(options?: { autoClose?: boolean }) {
     for (;;) {
       const byteLength = decodeNumber(this.source)
       if (byteLength === 0) {
+        if (options?.autoClose) {
+          this.close()
+        }
         return
       }
       yield JSON.parse(this.source.readString(byteLength, 'utf8'))

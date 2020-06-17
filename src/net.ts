@@ -1,4 +1,4 @@
-
+import { Socket } from 'net'
 import { BinarySink } from './binary'
 
 export class NetSink implements BinarySink {
