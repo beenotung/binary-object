@@ -23,7 +23,7 @@
     "prebuild": "npm run clean",
     "build": "tsc -p tsconfig.build.json",
     "pretest": "npm run format && npm run build",
-    "rawtest": "ts-node test/index.ts || true",
+    "rawtest": "ts-node test/index.ts && ts-mocha test/**/*.test.ts",
     "prepublishOnly": "npm run rawtest && npm run build"
   },
   "husky": {
