@@ -1,6 +1,4 @@
-import {
-  BinaryJsonFileSink,
-} from '../src'
+import { BinaryJsonFileSink } from '../src'
 import { iterateSamples, sampleCount } from './sample'
 
 const file = 'db.log'
