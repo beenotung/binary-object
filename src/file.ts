@@ -78,8 +78,8 @@ export class FileSource implements BinarySource {
     fs.closeSync(this.fd)
   }
 
-  static fromFile(file: string) {
-    const fd = fs.openSync(file, 'r')
+  static fromFile(file: string, flags = 'r') {
+    const fd = fs.openSync(file, flags)
     return new FileSource(fd)
   }
 }

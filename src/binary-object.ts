@@ -290,7 +290,6 @@ export class BinaryObjectSink extends Sink<any> {
   close() {
     encode(this.sink, End)
     this.sink.close()
-    super.close()
   }
 }
 
@@ -453,5 +452,9 @@ export class BinaryObjectSource extends Source<any> {
 
   read(): any {
     return decode(this.source)
+  }
+
+  close() {
+    this.source.close()
   }
 }

@@ -3,7 +3,7 @@ import { FileSink, FileSource } from './file'
 import { Sink, Source } from './pipe'
 
 export class BinaryFileSink extends Sink<any> {
-  constructor(public sink: Sink<any>) {
+  constructor(public sink: BinaryObjectSink) {
     super()
   }
 
@@ -14,7 +14,6 @@ export class BinaryFileSink extends Sink<any> {
   close() {
     this.sink.write(End)
     this.sink.close()
-    super.close()
   }
 
   static fromFile(file: string, flags?: string) {
@@ -32,9 +31,12 @@ export class BinaryFileSource extends Source<any> {
   read(): any {
     return this.source.read()
   }
+  close() {
+    this.source.close()
+  }
 
-  static fromFile(file: string) {
-    const fileSource = FileSource.fromFile(file)
+  static fromFile(file: string, flags?: string) {
+    const fileSource = FileSource.fromFile(file, flags)
     const binaryObjectSource = new BinaryObjectSource(fileSource)
     return new BinaryFileSource(binaryObjectSource)
   }

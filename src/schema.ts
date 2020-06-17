@@ -52,6 +52,10 @@ export class SchemaSink extends Sink<any> {
     data = encode(this.sink, this.schemas, data)
     this.sink.write(data)
   }
+
+  close() {
+    this.sink.close()
+  }
 }
 
 function decodeSchema(schemas: string[][], data: any[]) {
@@ -103,5 +107,9 @@ export class SchemaSource extends Source<any> {
 
   read(): any {
     return read(this.source, this.schemas)
+  }
+
+  close() {
+    this.source.close()
   }
 }
