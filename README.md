@@ -9,7 +9,7 @@ Inspired by msgpack. With reduces memory usage.
 - Encode any value to binary format (and decode back)
 - Memory-efficient
 - Auto detect object schema to make the binary format more compact (optional)
-- This library is highly composable, it can be extended/reused to support different encoding schema and intput/output channel
+- This library is highly composable, it can be extended/reused to support different encoding schema and input/output channel
 
 - Support varies encode/decode pipes:
   - [x] Binary Object
@@ -68,12 +68,23 @@ Effective like the object pooling but for buffer.
 Also, the length of each data chunk is deterministic from the header (data type and length).
 Therefore, the decoder knows exactly how many bytes should be read to process.
 
-In addition, a few generator method help to decode the binary data iteratively:
-- `iterateSchemaFile()`
-- `iterateBinaryFile()`
+In addition, some source type support `*iterator()` generator method which help to decode the binary data iteratively.
 
-The `encode/1` function works similar to the `pack/1` in msgpack;
-the `decode/1` function works similar to the `unpack/1` in msgpack.
+This library implement the I/O and decode/encode as pipes, namely Sink and Source.
+
+Multiple sinks or sources can be stacked together in flexible manner. e.g.
+```typescript
+const sink = new SchemaSink(new BinaryJsonSink(FileSink.fromFile('db.log')))
+
+const source = new SchemaSource(new BinaryJsonSource(FileSource.fromFile('db.log')))
+```
+
+Or you can use some pre-defined factory functions to construct the pipes
+```typescript
+const sink = BinaryObjectFileSink.fromFile('db.log')
+
+const source = BinaryJsonFileSource.fromFile('db.log')
+```
 
 ## Does this work?
 The correctness is tested and passed.
