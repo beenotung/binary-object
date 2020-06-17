@@ -3,8 +3,7 @@ import { decode, encode } from './binary-file'
 import { samples } from './sample-object'
 import { getTypeName } from './utils'
 
-function test(type: number, sample: any) {
-  const typeName = getTypeName(type)
+function test(typeName: string, sample: any) {
   it('should encode ' + typeName, function () {
     encode(sample)
   })
@@ -20,6 +19,11 @@ function test(type: number, sample: any) {
 
 describe('Binary File TestSuit', function () {
   for (const [type, sample] of samples) {
-    test(type, sample)
+    const typeName = getTypeName(type)
+    test(typeName, sample)
   }
+  test(
+    'all samples',
+    samples.map(sample => sample[1]).filter(x => typeof x !== 'function'),
+  )
 })
