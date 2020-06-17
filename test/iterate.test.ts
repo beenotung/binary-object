@@ -1,6 +1,9 @@
 import { assert } from 'chai'
+import debug from 'debug'
 import { BinaryFileSink, iterateBinaryFile } from '../src/binary-file'
 import { samples } from './sample-object'
+
+const log = debug('test:iterator')
 
 describe('Binary File Iterator TestSuit', () => {
   const file = 'log'
@@ -8,12 +11,12 @@ describe('Binary File Iterator TestSuit', () => {
   it('should prepare data', function (done) {
     const sink = BinaryFileSink.fromFile(file)
     for (const sample of samples) {
-      console.log('write', sample)
+      log('write', sample)
       sink.write(sample[1])
     }
-    console.log('close')
+    log('close')
     sink.close()
-    console.log('closed')
+    log('closed')
     done()
   })
 
@@ -21,14 +24,14 @@ describe('Binary File Iterator TestSuit', () => {
     let i = 0
     for (let data of iterateBinaryFile(file)) {
       let sample = samples[i]?.[1]
-      console.log('read', { i, sample, data })
+      log('read', { i, sample, data })
       if (typeof sample === 'function') {
         data = data.toString()
         sample = sample.toString()
       }
       assert.deepEqual(data, sample)
       i++
-      // console.log('next', samples[i])
+      // log('next', samples[i])
     }
     assert.equal(i, samples.length)
   })
