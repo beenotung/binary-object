@@ -1,6 +1,7 @@
 import { BinarySink, BinarySource } from './binary'
 import { fraction } from './number'
 import { Sink, Source } from './pipe'
+import { checkUniqueTypes } from './utils'
 
 export let Types = {
   Undefined: 0,
@@ -31,18 +32,9 @@ export let Types = {
   Object: 25,
   End: 26,
 }
+checkUniqueTypes(Types)
 
 export let End = Symbol('End')
-
-function checkTypes() {
-  const values = Object.values(Types)
-  const set = new Set(values)
-  if (set.size !== values.length) {
-    throw new Error('duplicated Type value')
-  }
-}
-
-checkTypes()
 
 /**
  * == byteSize ==
