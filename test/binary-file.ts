@@ -20,4 +20,7 @@ export function test(sample: any) {
   console.log(decode())
 }
 
-test(Math.PI)
+// test(Math.PI)
+// test(Buffer.from([1, 2, 3]))
+// test([1, 2, 3])
+// test({ key: 'val' })

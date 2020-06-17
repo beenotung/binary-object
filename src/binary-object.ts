@@ -161,6 +161,10 @@ function encodeBigInt(sink: BinarySink, data: bigint) {
 }
 
 function encodeSymbol(sink: BinarySink, data: symbol) {
+  if (data === End) {
+    sink.write(Types.End)
+    return
+  }
   const key = Symbol.keyFor(data)
   if (key === undefined) {
     console.error('unknown symbol key:', data)
@@ -281,6 +285,12 @@ export class BinaryObjectSink extends Sink<any> {
 
   write(data: any) {
     encode(this.sink, data)
+  }
+
+  close() {
+    encode(this.sink, End)
+    this.sink.close()
+    super.close()
   }
 }
 

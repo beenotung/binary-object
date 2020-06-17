@@ -1,4 +1,8 @@
-import { BinaryObjectSink, BinaryObjectSource, Types } from './binary-object'
+import {
+  BinaryObjectSink,
+  BinaryObjectSource,
+  End,
+} from './binary-object'
 import { FileSink, FileSource } from './file'
 import { Sink, Source } from './pipe'
 
@@ -12,7 +16,7 @@ export class BinaryFileSink extends Sink<any> {
   }
 
   close() {
-    this.sink.write(Types.End)
+    this.sink.write(End)
     this.sink.close()
     super.close()
   }
@@ -37,5 +41,16 @@ export class BinaryFileSource extends Source<any> {
     const fileSource = FileSource.fromFile(file)
     const binaryObjectSource = new BinaryObjectSource(fileSource)
     return new BinaryFileSource(binaryObjectSource)
+  }
+}
+
+export function* iterateBinaryFile(file: string) {
+  const source = BinaryFileSource.fromFile(file)
+  for (;;) {
+    const data = source.read()
+    if (data === End) {
+      return
+    }
+    yield data
   }
 }
