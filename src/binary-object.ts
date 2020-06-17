@@ -1,4 +1,5 @@
 import { BinarySink, BinarySource } from './binary'
+import { fraction } from './number'
 import { Sink, Source } from './pipe'
 
 export let Types = {
@@ -18,15 +19,16 @@ export let Types = {
   UInt64BE: 13,
   FloatBE: 14,
   DoubleBE: 15,
-  BinaryString: 16,
-  Utf8Function: 17,
-  Utf8Symbol: 18,
-  DateUInt64BE: 19,
-  Map: 20,
-  Set: 21,
-  Buffer: 22,
-  Array: 23,
-  Object: 24,
+  Fraction: 16,
+  BinaryString: 17,
+  Utf8Function: 18,
+  Utf8Symbol: 19,
+  DateUInt64BE: 20,
+  Map: 21,
+  Set: 22,
+  Buffer: 23,
+  Array: 24,
+  Object: 25,
 }
 
 function checkTypes() {
@@ -58,15 +60,27 @@ function encodeUInt64BE(sink: BinarySink, type: number, data: number) {
 }
 
 function encodeUFloat(sink: BinarySink, data: number) {
+  /* float */
   numberBuffer.writeFloatBE(data, 1)
   if (numberBuffer.readFloatBE(1) === data) {
     numberBuffer[0] = Types.FloatBE
     sink.writeBuffer(numberBuffer, 0, 1 + 4)
     return
   }
-  numberBuffer[0] = Types.DoubleBE
+
+  /* double */
   numberBuffer.writeDoubleBE(data, 1)
-  sink.writeBuffer(numberBuffer, 0, 1 + 8)
+  if (numberBuffer.readDoubleBE(1) === data) {
+    numberBuffer[0] = Types.DoubleBE
+    sink.writeBuffer(numberBuffer, 0, 1 + 8)
+    return
+  }
+
+  /* rational number */
+  const frac = fraction(data)
+  sink.write(Types.Fraction)
+  encodeNumber(sink, frac[0])
+  encodeNumber(sink, frac[1])
 }
 
 function encodeUInt(sink: BinarySink, data: number) {
@@ -276,6 +290,12 @@ function decodeBuffer(source: BinarySource): Buffer {
   return buffer
 }
 
+function decodeFraction(source: BinarySource): number {
+  const a = decodeNumber(source)
+  const b = decodeNumber(source)
+  return a / b
+}
+
 function decodeBinaryString(source: BinarySource): string {
   const byteLength = decodeNumber(source)
   return source.readString(byteLength, 'binary')
@@ -374,7 +394,9 @@ function decode(source: BinarySource): any {
     case Types.FloatBE:
       return Number(source.readBatch(4).readFloatBE())
     case Types.DoubleBE:
-      return Number(source.readBatch(4).readDoubleBE())
+      return Number(source.readBatch(8).readDoubleBE())
+    case Types.Fraction:
+      return decodeFraction(source)
     case Types.BinaryString:
       return decodeBinaryString(source)
     case Types.Utf8Function:

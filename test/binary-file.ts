@@ -20,4 +20,4 @@ export function test(sample: any) {
   console.log(decode())
 }
 
-// test(Buffer.from([1, 2, 3]))
+test(Math.PI)
