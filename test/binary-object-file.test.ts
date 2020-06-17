@@ -17,7 +17,7 @@ function test(typeName: string, sample: any) {
   })
 }
 
-describe('Binary File TestSuit', function () {
+describe('Binary Object TestSuit', function () {
   for (const [type, sample] of samples) {
     const typeName = getTypeName(type)
     test(typeName, sample)
