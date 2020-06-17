@@ -294,7 +294,6 @@ function decodeUInt64BE(source: BinarySource): number {
   source.readBuffer(8, numberBuffer)
   const data = numberBuffer.readBigUInt64BE()
   const number = Number(data)
-  console.log({ data, number })
   return number
 }
 
