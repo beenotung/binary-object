@@ -1,6 +1,4 @@
-import {
-  BinaryJsonFileSource,
-} from '../src'
+import { BinaryJsonFileSource } from '../src'
 import { sampleCount } from './sample'
 
 const file = 'db.log'
@@ -17,7 +15,9 @@ for (const data of source.iterator()) {
     key = data
     continue
   }
-  // console.log({ key, value: data })
+  if (!'dev') {
+    console.log({ key, value: data })
+  }
   if (Math.random() < 1 / 1000) {
     console.log(i / 2, '/', n)
   }

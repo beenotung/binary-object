@@ -1,4 +1,4 @@
-import net, { Socket } from 'net'
+
 import { BinarySink } from './binary'
 
 export class NetSink implements BinarySink {
@@ -41,12 +41,13 @@ export class NetSink implements BinarySink {
     this.sink.end()
   }
 
-  static createClient(port: number, host: string) {
-    const socket = net.createConnection(port, host)
-  }
+  // static createClient(port: number, host: string) {
+  //   const socket = net.createConnection(port, host)
+  // }
 }
 
 // TODO work out async version of source
+/*
 export class NetSource {
   constructor(public source: Socket) {}
 
@@ -72,3 +73,4 @@ export class NetSource {
     return ''
   }
 }
+*/
