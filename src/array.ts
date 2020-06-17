@@ -1,7 +1,8 @@
 /**
  * in-memory channel to mock IO
  * */
-import { Sink, Source } from '../src'
+
+import { Sink, Source } from './pipe'
 
 export class ArraySink extends Sink<any> {
   constructor(public memory: any[]) {

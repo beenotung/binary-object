@@ -1,5 +1,5 @@
-import { FileSink, FileSource } from '../src'
 import { BinaryJsonSink, BinaryJsonSource } from './binary-json'
+import { FileSink, FileSource } from './file'
 
 /**
  * only support JSON values
