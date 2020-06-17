@@ -1,8 +1,4 @@
-import {
-  BinaryObjectSink,
-  BinaryObjectSource,
-  End,
-} from './binary-object'
+import { BinaryObjectSink, BinaryObjectSource, End } from './binary-object'
 import { FileSink, FileSource } from './file'
 import { Sink, Source } from './pipe'
 

@@ -5,7 +5,7 @@ import { samples } from './sample-object'
 describe('Binary File Iterator TestSuit', () => {
   const file = 'log'
 
-  it('should prepare data', function(done) {
+  it('should prepare data', function (done) {
     const sink = BinaryFileSink.fromFile(file)
     for (const sample of samples) {
       console.log('write', sample)
@@ -17,7 +17,7 @@ describe('Binary File Iterator TestSuit', () => {
     done()
   })
 
-  it('should iterate all samples', function() {
+  it('should iterate all samples', function () {
     let i = 0
     for (let data of iterateBinaryFile(file)) {
       let sample = samples[i]?.[1]
