@@ -6,6 +6,8 @@ export interface BinarySink {
   writeBuffer(buffer: Buffer, offset: number, byteLength: number): void
 
   writeString(string: string, encoding: BufferEncoding): void
+
+  close(): void
 }
 
 export interface BinarySource {
@@ -24,4 +26,6 @@ export interface BinarySource {
   readBuffer(byteLength: number, buffer: Buffer): void
 
   readString(byteLength: number, encoding: BufferEncoding): string
+
+  close(): void
 }

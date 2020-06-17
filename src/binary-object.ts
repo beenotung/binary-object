@@ -188,7 +188,7 @@ function encodeObject(sink: BinarySink, data: object) {
   // use indexed-for-loop to skip empty check (speed up)
   for (let i = 0; i < n; i++) {
     const entry = entries[i]
-    encode(sink, entry[0])
+    encodeUtf8String(sink, entry[0])
     encode(sink, entry[1])
   }
 }
@@ -208,8 +208,8 @@ function encode(sink: BinarySink, data: any) {
         encodeUInt64BE(sink, Types.DateUInt64BE, data.getTime())
         break
       }
-      // TODO
       if (Buffer.isBuffer(data)) {
+        sink.write(Types.Buffer)
         encodeBuffer(sink, data)
         break
       }
@@ -259,7 +259,145 @@ export class BinaryObjectSink extends Sink<any> {
   }
 }
 
-function decode(source: BinarySource) {}
+function decodeNumber(source: BinarySource): number {
+  const data = decode(source)
+  if (typeof data !== 'number') {
+    console.error('invalid data, expect number, got:', data)
+    throw new Error('invalid data')
+  }
+  return data
+}
+
+function decodeBuffer(source: BinarySource): Buffer {
+  const byteLength = decodeNumber(source)
+  // cannot object the buffer from pool, because the consumer should be be impacted by pool object reuse
+  const buffer = Buffer.alloc(byteLength)
+  source.readBuffer(byteLength, buffer)
+  return buffer
+}
+
+function decodeBinaryString(source: BinarySource): string {
+  const byteLength = decodeNumber(source)
+  return source.readString(byteLength, 'binary')
+}
+
+function decodeUtf8String(source: BinarySource): string {
+  const byteLength = decodeNumber(source)
+  return source.readString(byteLength, 'utf8')
+}
+
+// FIXME use specific parsing to prevent XSS
+function decodeUtf8Function(source: BinarySource): Function {
+  const data = decodeUtf8String(source)
+  const func = eval('(' + data + ')')
+  const type = typeof func
+  if (type !== 'function') {
+    console.error('invalid binary data, expected function, got:', type)
+    throw new Error('invalid binary data')
+  }
+  return func
+}
+
+function decodeMap(source: BinarySource): Map<any, any> {
+  const n = decodeNumber(source)
+  const data = new Map()
+  for (let i = 0; i < n; i++) {
+    const key = decode(source)
+    const value = decode(source)
+    data.set(key, value)
+  }
+  return data
+}
+
+function decodeSet(source: BinarySource): Set<any> {
+  const n = decodeNumber(source)
+  const data = new Set()
+  for (let i = 0; i < n; i++) {
+    const value = decode(source)
+    data.add(value)
+  }
+  return data
+}
+
+function decodeArray(source: BinarySource): any[] {
+  const n = decodeNumber(source)
+  const data = new Array(n)
+  for (let i = 0; i < n; i++) {
+    const value = decode(source)
+    data[i] = value
+  }
+  return data
+}
+
+function decodeObject(source: BinarySource): object {
+  const n = decodeNumber(source)
+  const data: any = {}
+  for (let i = 0; i < n; i++) {
+    const key = decodeUtf8String(source)
+    const value = decode(source)
+    data[key] = value
+  }
+  return data
+}
+
+function decode(source: BinarySource): any {
+  const type = source.read()
+  switch (type) {
+    case Types.Undefined:
+      return undefined
+    case Types.Null:
+      return null
+    case Types.True:
+      return true
+    case Types.False:
+      return false
+    case Types.BigInt64BE:
+      return source.readBatch(8).readBigInt64BE()
+    case Types.BigUInt64BE:
+      return source.readBatch(8).readBigUInt64BE()
+    case Types.Zero:
+      return 0
+    case Types.Negative:
+      return -decode(source)
+    case Types.NaN:
+      return Number.NaN
+    case Types.Infinity:
+      return 1 / 0
+    case Types.Byte:
+      return source.read()
+    case Types.UInt16BE:
+      return source.readBatch(2).readUInt16BE()
+    case Types.UInt32BE:
+      return source.readBatch(4).readUInt32BE()
+    case Types.UInt64BE:
+      return Number(source.readBatch(8).readBigUInt64BE())
+    case Types.FloatBE:
+      return Number(source.readBatch(4).readFloatBE())
+    case Types.DoubleBE:
+      return Number(source.readBatch(4).readDoubleBE())
+    case Types.BinaryString:
+      return decodeBinaryString(source)
+    case Types.Utf8Function:
+      return decodeUtf8Function(source)
+    case Types.Utf8Symbol:
+      return Symbol.for(decodeUtf8String(source))
+    case Types.DateUInt64BE:
+      return new Date(decodeNumber(source))
+    case Types.Map:
+      return decodeMap(source)
+    case Types.Set:
+      return decodeSet(source)
+    case Types.Buffer:
+      return decodeBuffer(source)
+    case Types.Array:
+      return decodeArray(source)
+    case Types.Object:
+      return decodeObject(source)
+    default:
+      console.error('unknown binary data type:', type)
+      throw new Error('unknown binary data type')
+  }
+}
 
 export class BinaryObjectSource extends Source<any> {
   constructor(public source: BinarySource) {

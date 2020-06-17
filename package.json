@@ -49,10 +49,15 @@
     "tslib": "^2.0.0"
   },
   "devDependencies": {
+    "@types/chai": "^4.2.11",
+    "@types/mocha": "^7.0.2",
     "@types/node": "*",
+    "chai": "^4.2.0",
     "husky": "^4.2.5",
+    "mocha": "^8.0.1",
     "prettier": "^2.0.5",
     "rimraf": "^3.0.2",
+    "ts-mocha": "^7.0.0",
     "ts-node": "^8.10.2",
     "tslint": "^6.1.2",
     "tslint-config-prettier": "^1.18.0",

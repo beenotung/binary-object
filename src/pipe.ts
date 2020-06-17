@@ -6,6 +6,8 @@ export abstract class Sink<T> {
       this.write(datum)
     }
   }
+
+  close(): void {}
 }
 
 export abstract class Source<T> {
@@ -18,4 +20,6 @@ export abstract class Source<T> {
     }
     return res
   }
+
+  close(): void {}
 }

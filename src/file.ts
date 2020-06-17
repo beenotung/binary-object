@@ -20,9 +20,14 @@ export class FileSink implements BinarySink {
     fs.writeSync(this.fd, string, null, encoding)
   }
 
+  close() {
+    fs.closeSync(this.fd)
+  }
+
   static fromFile(file: string) {
     fs.writeFileSync(file, '')
-    return new FileSink(fs.openSync(file, 'as'))
+    const fd = fs.openSync(file, 'as')
+    return new FileSink(fd)
   }
 }
 
@@ -34,6 +39,7 @@ export class FileSource implements BinarySource {
   constructor(public fd: number) {}
 
   read(): number {
+    // console.log('read from', this.position)
     fs.readSync(this.fd, buffer, 0, 1, this.position)
     this.position++
     return buffer[0]
@@ -43,6 +49,7 @@ export class FileSource implements BinarySource {
    * may be pooled and shared
    * */
   readBatch(byteLength: number): Buffer {
+    // console.log('read', byteLength, 'bytes from', this.position)
     if (buffer.length < byteLength) {
       buffer = Buffer.alloc(byteLength)
     }
@@ -57,6 +64,7 @@ export class FileSource implements BinarySource {
    * will not auto resize
    * */
   readBuffer(byteLength: number, buffer: Buffer): void {
+    // console.log('read', byteLength, 'bytes from', this.position)
     fs.readSync(this.fd, buffer, 0, byteLength, this.position)
     this.position += byteLength
   }
@@ -64,5 +72,14 @@ export class FileSource implements BinarySource {
   readString(byteLength: number, encoding: BufferEncoding): string {
     const buffer = this.readBatch(byteLength)
     return buffer.slice(0, byteLength).toString(encoding)
+  }
+
+  close() {
+    fs.closeSync(this.fd)
+  }
+
+  static fromFile(file: string) {
+    const fd = fs.openSync(file, 'r')
+    return new FileSource(fd)
   }
 }
