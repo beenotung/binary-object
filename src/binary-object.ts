@@ -100,7 +100,7 @@ function encodeUInt(sink: BinarySink, data: number) {
   encodeUInt64BE(sink, Types.UInt64BE, data)
 }
 
-function encodeNumber(sink: BinarySink, data: number) {
+export function encodeNumber(sink: BinarySink, data: number) {
   if (data === 0) {
     sink.write(Types.Zero)
     return
@@ -270,6 +270,12 @@ function encode(sink: BinarySink, data: any) {
   }
 }
 
+/**
+ * support full set of javascript objects
+ * including Buffer, Map, Set and Date
+ *
+ * but it is much slower than BinaryJsonSink, which only support JSON values
+ * */
 export class BinaryObjectSink extends Sink<any> {
   constructor(public sink: BinarySink) {
     super()
@@ -285,7 +291,7 @@ export class BinaryObjectSink extends Sink<any> {
   }
 }
 
-function decodeNumber(source: BinarySource): number {
+export function decodeNumber(source: BinarySource): number {
   const data = decode(source)
   if (typeof data !== 'number') {
     console.error('invalid data, expect number, got:', data)
@@ -437,6 +443,12 @@ function decode(source: BinarySource): any {
   }
 }
 
+/**
+ * support full set of javascript objects
+ * including Buffer, Map, Set and Date
+ *
+ * but it is much slower than BinaryJsonSource, which only support JSON values
+ * */
 export class BinaryObjectSource extends Source<any> {
   constructor(public source: BinarySource) {
     super()
@@ -448,5 +460,15 @@ export class BinaryObjectSource extends Source<any> {
 
   close() {
     this.source.close()
+  }
+
+  *iterator() {
+    for (;;) {
+      const data = this.read()
+      if (data === End) {
+        return
+      }
+      yield data
+    }
   }
 }

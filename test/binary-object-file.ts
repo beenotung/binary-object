@@ -1,15 +1,18 @@
-import { BinaryFileSink, BinaryFileSource } from '../src/binary-file'
+import {
+  BinaryObjectFileSink,
+  BinaryObjectFileSource,
+} from '../src/binary-object-file'
 
 const file = 'log'
 
 export function encode(data: any) {
-  const sink = BinaryFileSink.fromFile(file)
+  const sink = BinaryObjectFileSink.fromFile(file)
   sink.write(data)
   sink.close()
 }
 
 export function decode() {
-  const source = BinaryFileSource.fromFile(file)
+  const source = BinaryObjectFileSource.fromFile(file)
   const data = source.read()
   source.close()
   return data

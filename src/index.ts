@@ -1,13 +1,9 @@
 export * from './binary'
-export * from './binary-file'
-export {
-  BinaryObjectSink,
-  BinaryObjectSource,
-  End,
-  Types as BinaryObjectTypes,
-} from './binary-object'
+export * from './binary-json'
+export * from './binary-json-file'
+export { BinaryObjectSink, BinaryObjectSource, End } from './binary-object'
+export * from './binary-object-file'
 export * from './file'
 export * from './number'
 export * from './pipe'
-export { SchemaSink, SchemaSource, Types as SchemaTypes } from './schema'
-export * from './schema-file'
+export { SchemaSink, SchemaSource } from './schema'

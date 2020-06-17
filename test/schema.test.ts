@@ -1,6 +1,6 @@
 import { assert } from 'chai'
 import { SchemaSink, SchemaSource } from '../src'
-import { ArraySink, ArraySource } from './array-pipe'
+import { ArraySink, ArraySource } from '../src/array'
 import { samples } from './sample-object'
 import { getTypeName } from './utils'
 

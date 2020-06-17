@@ -1,6 +1,9 @@
 import { assert } from 'chai'
 import debug from 'debug'
-import { BinaryFileSink, iterateBinaryFile } from '../src/binary-file'
+import {
+  BinaryObjectFileSink,
+  iterateBinaryObjectFile,
+} from '../src/binary-object-file'
 import { samples } from './sample-object'
 
 const log = debug('test:iterator')
@@ -9,7 +12,7 @@ describe('Binary File Iterator TestSuit', () => {
   const file = 'log'
 
   it('should prepare data', function (done) {
-    const sink = BinaryFileSink.fromFile(file)
+    const sink = BinaryObjectFileSink.fromFile(file)
     for (const sample of samples) {
       log('write', sample)
       sink.write(sample[1])
@@ -22,7 +25,7 @@ describe('Binary File Iterator TestSuit', () => {
 
   it('should iterate all samples', function () {
     let i = 0
-    for (let data of iterateBinaryFile(file)) {
+    for (let data of iterateBinaryObjectFile(file)) {
       let sample = samples[i]?.[1]
       log('read', { i, sample, data })
       if (typeof sample === 'function') {

@@ -1,5 +1,7 @@
 import fs from 'fs'
 
+const file = 'res/sample.txt'
+
 const Type = {
   Key: 1,
   Value: 2,
@@ -10,9 +12,10 @@ export function* iterateSamples() {
   let key: string = ''
   let value: any
   for (const string of fs
-    .readFileSync('res/sample.txt')
+    .readFileSync(file)
     .toString()
-    .split('\n')) {
+    .split('\n')
+    .filter(s => s)) {
     switch (mode) {
       case Type.Key:
         key = JSON.parse(string)
@@ -26,3 +29,15 @@ export function* iterateSamples() {
     }
   }
 }
+
+export function countSamples() {
+  return (
+    fs
+      .readFileSync(file)
+      .toString()
+      .split('\n')
+      .filter(s => s).length / 2
+  )
+}
+
+export let sampleCount = 266430

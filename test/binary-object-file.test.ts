@@ -1,22 +1,7 @@
 import { assert } from 'chai'
-import { SchemaFileSink, SchemaFileSource } from '../src'
+import { decode, encode } from './binary-object-file'
 import { samples } from './sample-object'
 import { getTypeName } from './utils'
-
-const file = 'log'
-
-export function encode(data: any) {
-  const sink = SchemaFileSink.fromFile(file)
-  sink.write(data)
-  sink.close()
-}
-
-export function decode() {
-  const source = SchemaFileSource.fromFile(file)
-  const data = source.read()
-  source.close()
-  return data
-}
 
 function test(typeName: string, sample: any) {
   it('should encode ' + typeName, function () {

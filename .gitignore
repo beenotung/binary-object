@@ -10,3 +10,4 @@ dist/
 # test data
 res/
 log
+db.log

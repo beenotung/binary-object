@@ -17,6 +17,9 @@ export class ArraySink extends Sink<any> {
   }
 }
 
+/**
+ * in-memory channel to mock IO
+ * */
 export class ArraySource extends Source<any> {
   position = 0
 
