@@ -8,10 +8,11 @@ Inspired by msgpack. With reduces memory usage.
 ## Features
 - Encode any value to binary format (and decode back)
 - Memory-efficient
+- Auto detect object schema to make the binary format more compact (optional)
 - Support varies input/output type:
-  - Buffer
-  - File
-  - Stream
+  - [ ] Buffer
+  - [x] File
+  - [ ] Stream
 
 Wide range of javascript data type are supported:
 - string
@@ -57,20 +58,17 @@ Effective like the object pooling but for buffer.
 Also, the length of each data chunk is deterministic from the header (data type and length).
 Therefore, the decoder knows exactly how many bytes should be read to process.
 
-In addition, a generator function `decode_all()`
+In addition, a few generator-functions help to decode the binary data iteratively:
+- `iterateSchemaFile()`
+- `iterateBinaryFile()`
 
 The `encode/1` function works similar to the `pack/1` in msgpack;
 the `decode/1` function works similar to the `unpack/1` in msgpack.
 
 ## Does this work?
-**Not yet**.
+The correctness is tested and passed.
 
-`encode/1` is basically implemented, with a known bug;
-
-`decode/1` is not implemented yet.
-
-Generic input/output pipe is not supported yet.
-It currently only works on buffer.
+The benchmarking is not done.
 
 ## LICENSE
 [BSD-2-Clause](./LICENSE) (Free Open Sourced Software)
