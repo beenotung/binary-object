@@ -240,6 +240,7 @@ function encode(sink: BinarySink, data: any) {
       }
       if (Array.isArray(data)) {
         encodeArray(sink, data)
+        break
       }
       encodeObject(sink, data)
       break
