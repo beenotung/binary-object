@@ -1,4 +1,4 @@
-import { BinaryObjectSink, BinaryObjectSource } from './binary-object'
+import { BinaryObjectSink, BinaryObjectSource, Types } from './binary-object'
 import { FileSink, FileSource } from './file'
 import { Sink, Source } from './pipe'
 
@@ -9,6 +9,12 @@ export class BinaryFileSink extends Sink<any> {
 
   write(data: any) {
     this.sink.write(data)
+  }
+
+  close() {
+    this.sink.write(Types.End)
+    this.sink.close()
+    super.close()
   }
 
   static fromFile(file: string) {

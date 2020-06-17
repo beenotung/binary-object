@@ -29,7 +29,10 @@ export let Types = {
   Buffer: 23,
   Array: 24,
   Object: 25,
+  End: 26,
 }
+
+export let End = Symbol('End')
 
 function checkTypes() {
   const values = Object.values(Types)
@@ -260,6 +263,13 @@ function encode(sink: BinarySink, data: any) {
     case 'bigint':
       encodeBigInt(sink, data)
       break
+    default:
+      if (data === End) {
+        sink.write(Types.End)
+        break
+      }
+      console.error('unsupported data type:', data)
+      throw new Error('unsupported data type')
   }
 }
 
@@ -417,6 +427,8 @@ function decode(source: BinarySource): any {
       return decodeArray(source)
     case Types.Object:
       return decodeObject(source)
+    case Types.End:
+      return End
     default:
       console.error('unknown binary data type:', type)
       throw new Error('unknown binary data type')
