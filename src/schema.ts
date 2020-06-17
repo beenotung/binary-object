@@ -1,6 +1,6 @@
 import { Sink, Source } from './pipe'
 
-export const Type = {
+export const Types = {
   Array: 1,
   Schema: 2,
   Object: 3,
@@ -18,7 +18,7 @@ function getSchemaId(
   }
   const id = schemas.size
   schemas.set(key, id)
-  keys.push(id, Type.Schema)
+  keys.push(id, Types.Schema)
   sink.write(keys)
   return id
 }
@@ -29,14 +29,14 @@ function encode(sink: Sink<any>, schemas: Map<string, number>, data: any): any {
   }
   if (Array.isArray(data)) {
     const array = data.map(data => encode(sink, schemas, data))
-    array.push(Type.Array)
+    array.push(Types.Array)
     return array
   }
   {
     // is object
     const schemaId = getSchemaId(sink, schemas, data)
     const values = Object.values(data)
-    values.push(schemaId, Type.Object)
+    values.push(schemaId, Types.Object)
     return values
   }
 }
@@ -84,12 +84,12 @@ function read(source: Source<any>, schemas: string[][]): any {
   }
   const type = data.pop()
   switch (type) {
-    case Type.Array:
+    case Types.Array:
       return data
-    case Type.Schema:
+    case Types.Schema:
       schemas.push(data)
       return read(source, schemas)
-    case Type.Object:
+    case Types.Object:
       return decodeSchema(schemas, data)
   }
 }
