@@ -131,7 +131,6 @@ function decodeObject(
   const n = keys.length
   if (n !== data.length) {
     console.error('invalid schema data:', { keys: n, values: data.length })
-    console.log({ keys, values: data, schemas, schemaId })
     throw new Error('invalid schema data')
   }
   const values = data.map(data => decode(source, schemas, data))
