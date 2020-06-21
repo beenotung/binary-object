@@ -32,6 +32,12 @@ export class ArraySource extends Source<any> {
     return this.memory[this.position++]
   }
 
+  *iterator(options?: { autoClose?: boolean }): Generator<any> {
+    for (const data of this.memory) {
+      yield data
+    }
+  }
+
   close() {
     delete this.memory
   }

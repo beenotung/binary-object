@@ -217,6 +217,12 @@ export class SchemaSource extends Source<any> {
     return decode(this.source, this.schemas, data)
   }
 
+  *iterator(options?: { autoClose?: boolean }): Generator<any> {
+    for (const data of this.source.iterator(options)) {
+      yield decode(this.source, this.schemas, data)
+    }
+  }
+
   close() {
     this.source.close()
   }

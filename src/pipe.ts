@@ -22,4 +22,6 @@ export abstract class Source<T> {
   }
 
   abstract close(): void
+
+  abstract iterator(options?: { autoClose?: boolean }): Generator<T>
 }

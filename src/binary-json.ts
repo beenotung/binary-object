@@ -1,6 +1,7 @@
 import { BinarySink, BinarySource } from './binary'
-import { decodeNumber, encodeNumber, End } from './binary-object'
+import { decodeNumber, encodeNumber } from './binary-object'
 import { Sink, Source } from './pipe'
+import { End } from './utils'
 
 /**
  * only support JSON values

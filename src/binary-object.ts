@@ -1,7 +1,7 @@
 import { BinarySink, BinarySource } from './binary'
 import { fraction } from './number'
 import { Sink, Source } from './pipe'
-import { checkUniqueTypes } from './utils'
+import { checkUniqueTypes, End } from './utils'
 
 export let Types = {
   Undefined: 0,
@@ -33,8 +33,6 @@ export let Types = {
   End: 26,
 }
 checkUniqueTypes(Types)
-
-export let End = Symbol('End')
 
 /**
  * == byteSize ==
@@ -125,7 +123,7 @@ export function encodeNumber(sink: BinarySink, data: number) {
   encodeUFloat(sink, data)
 }
 
-function encodeBuffer(sink: BinarySink, data: Buffer) {
+export function encodeBuffer(sink: BinarySink, data: Buffer) {
   const byteLength = data.byteLength
   encodeNumber(sink, byteLength)
   sink.writeBuffer(data, 0, byteLength)
@@ -136,7 +134,7 @@ function encodeBinaryString(sink: BinarySink, data: string) {
   encodeBuffer(sink, buffer)
 }
 
-function encodeUtf8String(sink: BinarySink, data: string) {
+export function encodeUtf8String(sink: BinarySink, data: string) {
   const buffer = Buffer.from(data, 'utf8')
   encodeBuffer(sink, buffer)
 }
@@ -306,7 +304,7 @@ export function decodeNumber(source: BinarySource): number {
   return data
 }
 
-function decodeBuffer(source: BinarySource): Buffer {
+export function decodeBuffer(source: BinarySource): Buffer {
   const byteLength = decodeNumber(source)
   // cannot object the buffer from pool, because the consumer should be be impacted by pool object reuse
   const buffer = Buffer.alloc(byteLength)
@@ -325,7 +323,7 @@ function decodeBinaryString(source: BinarySource): string {
   return source.readString(byteLength, 'binary')
 }
 
-function decodeUtf8String(source: BinarySource): string {
+export function decodeUtf8String(source: BinarySource): string {
   const byteLength = decodeNumber(source)
   return source.readString(byteLength, 'utf8')
 }
@@ -445,6 +443,7 @@ function decode(source: BinarySource): any {
       return End
     default:
       console.error('unknown binary data type:', type)
+      console.error('next:', source.readString(100, 'utf8'))
       throw new Error('unknown binary data type')
   }
 }

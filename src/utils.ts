@@ -5,3 +5,5 @@ export function checkUniqueTypes(types: Record<string, number>) {
     throw new Error('duplicated Type value')
   }
 }
+
+export let End = Symbol('End')

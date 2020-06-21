@@ -34,3 +34,32 @@ export let samples: Sample[] = [
   [Types.Array, [42, 'ans']],
   [Types.Object, { key: 'val' }],
 ]
+
+export let jsonSample = samples.filter(sample => {
+  const data = sample[1]
+  switch (typeof data) {
+    case 'undefined':
+    case 'function':
+    case 'symbol':
+    case 'bigint':
+      return false
+    case 'number':
+      if (Number.isNaN(data) || !Number.isFinite(data)) {
+        return false
+      }
+      if (data < 0) {
+        return false // FIXME
+      }
+      break
+    case 'object':
+      if (
+        data instanceof Map ||
+        data instanceof Set ||
+        data instanceof Date ||
+        Buffer.isBuffer(data)
+      ) {
+        return false
+      }
+  }
+  return true
+})
