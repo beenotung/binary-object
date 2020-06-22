@@ -100,10 +100,13 @@ The benchmarking is not done.
 data > binary-json > file
 (843M)
 
-**space-efficient**:
+**disk-space-efficient**:
 data > schema > binary-object > file
 (622M)
 
+**disk-space-efficient**:
+data > continuous-compress-json > line-file
+(~464M) (require more time and memory, we only measured 50% data, result in 232M file)
 
 fast, and a bit space-efficient:
 data > schema > binary-json > file

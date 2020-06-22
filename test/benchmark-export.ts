@@ -1,16 +1,20 @@
-import { BinaryJsonFileSink } from '../src'
+import { ContinuousCompressJsonSink } from '../src/continuous-compress-json'
+import { LineFileSink } from '../src/line-file'
 import { iterateSamples, sampleCount } from './sample'
 
 const file = 'db.log'
 
 // const sink = BinaryObjectFileSink.fromFile(file)
 // const sink = new SchemaSink(new BinaryObjectSink(FileSink.fromFile(file)))
-const sink = BinaryJsonFileSink.fromFile(file)
+// const sink = BinaryJsonFileSink.fromFile(file)
 // const sink = new SchemaSink(new BinaryJsonSink(FileSink.fromFile(file)))
 // const sink = new MsgpackSink(FileSink.fromFile(file))
 // const sink = new SchemaSink(new MsgpackSink(FileSink.fromFile(file)))
+// const sink = new SchemaSink(new JsonSink(LineFileSink.fromFile(file)))
+// const sink = new SchemaSink(new CompressJsonSink(LineFileSink.fromFile(file)))
+const sink = new ContinuousCompressJsonSink(LineFileSink.fromFile(file))
 
-const n = sampleCount
+const n = sampleCount / 2
 let i = 0
 console.log({ n })
 for (const { key, value } of iterateSamples()) {
@@ -19,6 +23,9 @@ for (const { key, value } of iterateSamples()) {
   sink.write(value)
   if (Math.random() < 1 / 1000) {
     console.log(i, '/', n)
+  }
+  if (i >= n) {
+    break
   }
 }
 sink.close()
