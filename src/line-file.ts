@@ -1,5 +1,6 @@
 import fs from 'fs'
 import { Sink, Source } from './pipe'
+import { Errors } from './utils'
 
 export class LineFileSink extends Sink<string> {
   constructor(public fd: number) {
@@ -7,8 +8,8 @@ export class LineFileSink extends Sink<string> {
   }
 
   write(data: string) {
-    data = data.replace(/\\/g, '\\\\').replace(/\n/g, '\\n') + '\n'
-    fs.writeSync(this.fd, data)
+    const line = data.replace(/\\/g, '\\\\').replace(/\n/g, '\\n') + '\n'
+    fs.writeSync(this.fd, line)
   }
 
   close() {
@@ -23,7 +24,6 @@ export class LineFileSink extends Sink<string> {
 }
 
 export class LineFileSource extends Source<string> {
-
   generator?: Generator<string>
   constructor(public fd: number) {
     super()
@@ -35,7 +35,7 @@ export class LineFileSource extends Source<string> {
     }
     const res = this.generator.next()
     if (res.done) {
-      throw new Error('already consumed all')
+      throw new Error(Errors.End)
     }
     return res.value
   }

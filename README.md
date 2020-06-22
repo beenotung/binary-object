@@ -15,7 +15,8 @@ Inspired by msgpack. With reduces memory usage.
   - [x] Binary Object
   - [x] Binary JSON
   - [x] Object Schema (store object keys only once, similar to csv, but nested)
-  - [x] Msgpack
+  - [x] [compress-json](https://www.npmjs.com/package/compress-json)
+  - [x] [msgpack](https://www.npmjs.com/package/msgpack)
 
 - Support varies input/output channel:
   - [ ] Buffer

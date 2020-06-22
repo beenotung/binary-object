@@ -7,3 +7,7 @@ export function checkUniqueTypes(types: Record<string, number>) {
 }
 
 export let End = Symbol('End')
+export type End = typeof End
+export const Errors = {
+  End: 'already consumed all',
+}
