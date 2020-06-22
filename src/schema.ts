@@ -72,7 +72,7 @@ function encodeObject(
   data: object,
 ) {
   const schemaId = getSchemaId(sink, schemas, data)
-  const values = Object.values(data)
+  const values = Object.values(data).map(value => encode(sink, schemas, value))
   values.push(schemaId, Types.Object)
   return values
 }
