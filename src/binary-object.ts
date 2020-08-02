@@ -304,6 +304,15 @@ export function decodeNumber(source: BinarySource): number {
   return data
 }
 
+export function decodeNumberOrEnd(source: BinarySource) {
+  const data = decode(source)
+  if (data === End || typeof data === 'number') {
+    return data
+  }
+  console.error('invalid data, expect number, got:', data)
+  throw new Error('invalid data')
+}
+
 export function decodeBuffer(source: BinarySource): Buffer {
   const byteLength = decodeNumber(source)
   // cannot object the buffer from pool, because the consumer should be be impacted by pool object reuse

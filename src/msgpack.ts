@@ -1,6 +1,11 @@
 import { pack, unpack } from 'msgpack'
-import { decodeNumber, encodeNumber } from './binary-object'
-import { BinarySink, BinarySource, Sink, Source } from './index'
+import {
+  decodeNumber,
+  decodeNumberOrEnd,
+  encodeNumber,
+  Types,
+} from './binary-object'
+import { BinarySink, BinarySource, End, Sink, Source } from './index'
 
 export class MsgpackSink extends Sink<any> {
   constructor(public sink: BinarySink) {
@@ -14,6 +19,7 @@ export class MsgpackSink extends Sink<any> {
   }
 
   close() {
+    this.sink.write(Types.End)
     this.sink.close()
   }
 }
@@ -31,5 +37,16 @@ export class MsgpackSource extends Source<any> {
 
   close() {
     this.source.close()
+  }
+
+  *iterator(options: { autoClose?: boolean } | undefined): Generator<any> {
+    for (;;) {
+      const byteLength = decodeNumberOrEnd(this.source)
+      if (byteLength === End) {
+        break
+      }
+      const buffer = this.source.readBatch(byteLength).slice(0, byteLength)
+      yield unpack(buffer)
+    }
   }
 }
