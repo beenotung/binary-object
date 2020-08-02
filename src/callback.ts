@@ -6,7 +6,7 @@ export interface CallbackSource<T> {
   iterator(): AsyncGenerator<T>
 }
 
-export class StoppableCallbackSource<T> {
+export class StoppableCallbackSource<T> implements CallbackSource<T> {
   stopped = false
 
   constructor(
