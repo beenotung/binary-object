@@ -43,6 +43,9 @@ export class MsgpackSource extends Source<any> {
     for (;;) {
       const byteLength = decodeNumberOrEnd(this.source)
       if (byteLength === End) {
+        if (options?.autoClose) {
+          this.source.close()
+        }
         break
       }
       const buffer = this.source.readBatch(byteLength).slice(0, byteLength)
