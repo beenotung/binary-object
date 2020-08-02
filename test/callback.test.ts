@@ -1,6 +1,8 @@
 import { expect } from 'chai'
 import { StoppableCallbackSource } from '../src/callback'
 
+console.log = jest.fn()
+
 describe('StoppableCallback TestSuit', () => {
   class TickSource extends StoppableCallbackSource<number> {
     i = 0

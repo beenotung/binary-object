@@ -2,6 +2,8 @@ import { assert } from 'chai'
 import { Sink, Source } from '../src'
 import { getTypeName } from './utils'
 
+console.log = jest.fn()
+
 export function testEncode(sink: Sink<any>, typeName: string, sample: any) {
   it('should encode ' + typeName, function () {
     console.log('encode', typeName, sample)
