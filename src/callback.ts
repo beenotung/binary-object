@@ -1,32 +1,36 @@
-import { Sink, Source } from './pipe'
+export interface CallbackSource<T> {
+  read(cb: (data: T) => void): void
 
-export class CallbackSink<T> extends Sink<T> {
-  constructor(
-    public onData: (data: T) => void,
-    public onComplete?: () => void,
-  ) {
-    super()
-  }
+  close(): void
 
-  write(data: any) {
-    this.onData(data)
-  }
-
-  close() {
-    this.onComplete?.()
-  }
+  iterator(): AsyncGenerator<T>
 }
 
-export class CallbackSource<T> extends Source<T> {
-  constructor(public producer: () => T, public onClose?: () => void) {
-    super()
-  }
+export class StoppableCallbackSource<T> {
+  stopped = false
 
-  read(): any {
-    return this.producer()
+  constructor(
+    public source: {
+      read: (cb: (data: T) => void) => void
+      close?: () => void
+    },
+  ) {}
+
+  read(cb: (data: T) => void) {
+    this.source.read(cb)
   }
 
   close() {
-    this.onClose?.()
+    this.stopped = true
+    this.source.close?.()
+  }
+
+  async *iterator(): AsyncGenerator<T> {
+    for (;;) {
+      if (this.stopped) {
+        break
+      }
+      yield new Promise<T>(resolve => this.read(resolve))
+    }
   }
 }
