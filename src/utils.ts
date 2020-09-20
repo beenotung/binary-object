@@ -1,4 +1,4 @@
-export function checkUniqueTypes(types: Record<string, number>) {
+export function checkUniqueTypes(types: Record<string, string | number>) {
   const values = Object.values(types)
   const set = new Set(values)
   if (set.size !== values.length) {

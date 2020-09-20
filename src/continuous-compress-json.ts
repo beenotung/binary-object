@@ -34,6 +34,7 @@ function encode(sink: Sink<string>, memory: Memory, data: any) {
   sink.write('k|' + key)
 }
 
+/** @deprecated in favour of unique-value.ts for better better disk-efficiency and speed */
 export class ContinuousCompressJsonSink extends Sink<any> {
   memory = createSinkMemory(this.sink)
 

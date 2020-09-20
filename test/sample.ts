@@ -1,4 +1,5 @@
 import fs from 'fs'
+import { iterateFdByLine } from '../src/utils/fs'
 
 const file = 'res/sample.txt'
 
@@ -11,33 +12,31 @@ export function* iterateSamples() {
   let mode = Type.Key
   let key: string = ''
   let value: any
-  for (const string of fs
-    .readFileSync(file)
-    .toString()
-    .split('\n')
-    .filter(s => s)) {
+  const fd = fs.openSync(file, 'r')
+  for (const line of iterateFdByLine(fd)) {
     switch (mode) {
       case Type.Key:
-        key = JSON.parse(string)
+        key = JSON.parse(line)
         mode = Type.Value
         continue
       case Type.Value:
-        value = JSON.parse(string)
+        value = JSON.parse(line)
         yield { key, value }
         mode = Type.Key
         continue
     }
   }
+  fs.closeSync(fd)
 }
 
 export function countSamples() {
-  return (
-    fs
-      .readFileSync(file)
-      .toString()
-      .split('\n')
-      .filter(s => s).length / 2
-  )
+  let lines = 0
+  const fd = fs.openSync(file, 'r')
+  for (const _ of iterateFdByLine(fd)) {
+    lines++
+  }
+  fs.closeSync(fd)
+  return lines / 2
 }
 
 export let sampleCount = 266430

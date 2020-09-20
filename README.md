@@ -93,28 +93,44 @@ The correctness is tested and passed.
 The benchmarking is not done.
 
 ## Combination & Performance
-266430 sample json data:
-843M
 
-**high-speed**:
+### Sample Data
+266430 sample json data crawled from online forum.
+
+Total size: 843M
+
+The objects have consistent shape.
+
+Some data are duplicated, e.g. user name, and some common comments.
+
+### Benchmarks
+
+The sample data are read line by line, instead of loading into memory at once to avoid "Out of Memory Error".
+
+**high-write-speed**:
+data > json > raw-line-file
+| 843M
+| 38.07s write
+| 38.74s read
+
+**high-read-speed**:
 data > binary-json > file
-(843M)
+| 843M
+| 42.95s write
+| 30.02s read
 
-**disk-space-efficient**:
-data > schema > binary-object > file
-(622M)
-
-**disk-space-efficient**:
-data > continuous-compress-json > line-file
-(~464M) (require more time and memory, we only measured 50% data, result in 232M file)
-
-fast, and a bit space-efficient:
-data > schema > binary-json > file
-(833M)
-
-fairly-fast, fairly-space-efficient:
+**-high-read-speed-disk-space-efficient**:
 data > schema > msgpack > file
-(739M)
+| 640M
+| 51.80s write
+| 18.34s read
+
+**more-disk-space-efficient**:
+data > unique-value > line-file
+| 506M
+| 151.64s write
+| 59.26s read
+(estimated from 50% sample to avoid Out of Memory Error)
 
 ## LICENSE
 [BSD-2-Clause](./LICENSE) (Free Open Sourced Software)

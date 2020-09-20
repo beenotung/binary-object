@@ -20,6 +20,7 @@ export let samples: Sample[] = [
   [Types.FloatBE, 1.5],
   [Types.DoubleBE, Math.PI],
   [Types.BinaryString, 'str'],
+  [Types.BinaryString, 'line1<br>\nline2'],
   [
     Types.Utf8Function,
     function test() {

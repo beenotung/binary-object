@@ -1,12 +1,15 @@
-import { ContinuousCompressJsonSource } from '../src/continuous-compress-json'
-import { LineFileSource } from '../src/line-file'
+import { UniqueValueSource } from '../src'
+import { RawLineFileSource } from '../src/raw-line-file'
 import { sampleCount } from './sample'
 
 const file = 'db.log'
 
+// const source = new JsonSource(RawLineFileSource.fromFile(file))
 // const source = BinaryJsonFileSource.fromFile(file)
 // const source = new SchemaSource(new BinaryJsonSource(FileSource.fromFile(file)))
-const source = new ContinuousCompressJsonSource(LineFileSource.fromFile(file))
+// const source = new SchemaSource(new MsgpackSource(FileSource.fromFile(file)))
+// const source = new ContinuousCompressJsonSource(LineFileSource.fromFile(file))
+const source = new UniqueValueSource(RawLineFileSource.fromFile(file))
 
 const n = sampleCount
 let i = 0

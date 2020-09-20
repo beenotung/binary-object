@@ -1,31 +1,18 @@
 /**
- * auto escape \n
+ * do not escape \n
  * */
 import fs from 'fs'
 import { Sink, Source } from './pipe'
 import { Errors } from './utils'
 import { iterateFdByLine, IterateFdByLineOptions } from './utils/fs'
 
-function encode(data: string): string {
-  const json = JSON.stringify(data)
-  const line = json.substring(1, json.length - 1)
-  return line
-}
-
-function decode(line: string): string {
-  const json = `"${line}"`
-  const data = JSON.parse(json)
-  return data
-}
-
-/** @deprecated in favour of raw-line-file.ts for less overhead */
-export class LineFileSink extends Sink<string> {
+export class RawLineFileSink extends Sink<string> {
   constructor(public fd: number) {
     super()
   }
 
   write(data: string) {
-    const line = encode(data) + '\n'
+    const line = data + '\n'
     fs.writeSync(this.fd, line)
   }
 
@@ -36,11 +23,21 @@ export class LineFileSink extends Sink<string> {
   static fromFile(file: string, flags = 'a') {
     fs.writeFileSync(file, '')
     const fd = fs.openSync(file, flags)
-    return new LineFileSink(fd)
+    return new RawLineFileSink(fd)
   }
 }
 
-export class LineFileSource extends Source<string> {
+export class CheckedLineFileSink extends RawLineFileSink {
+  write(data: string) {
+    if (data.includes('\n')) {
+      throw new Error('unsupported data with newline')
+    }
+    const line = data + '\n'
+    fs.writeSync(this.fd, line)
+  }
+}
+
+export class RawLineFileSource extends Source<string> {
   generator?: Generator<string>
 
   constructor(public fd: number, public options?: IterateFdByLineOptions) {
@@ -60,10 +57,7 @@ export class LineFileSource extends Source<string> {
 
   *iterator(options?: { autoClose?: boolean }): Generator<string> {
     for (const line of iterateFdByLine(this.fd, this.options)) {
-      console.log({ line })
-      const data = decode(line)
-      console.log({ data })
-      yield data
+      yield line
     }
     if (options?.autoClose) {
       this.close()
@@ -76,6 +70,6 @@ export class LineFileSource extends Source<string> {
 
   static fromFile(file: string, flags = 'r', options?: IterateFdByLineOptions) {
     const fd = fs.openSync(file, flags)
-    return new LineFileSource(fd, options)
+    return new RawLineFileSource(fd, options)
   }
 }

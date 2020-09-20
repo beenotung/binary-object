@@ -1,9 +1,10 @@
-import { ContinuousCompressJsonSink } from '../src/continuous-compress-json'
-import { LineFileSink } from '../src/line-file'
+import { UniqueValueSink } from '../src'
+import { RawLineFileSink } from '../src/raw-line-file'
 import { iterateSamples, sampleCount } from './sample'
 
 const file = 'db.log'
 
+// const sink = new JsonSink(RawLineFileSink.fromFile(file))
 // const sink = BinaryObjectFileSink.fromFile(file)
 // const sink = new SchemaSink(new BinaryObjectSink(FileSink.fromFile(file)))
 // const sink = BinaryJsonFileSink.fromFile(file)
@@ -12,7 +13,8 @@ const file = 'db.log'
 // const sink = new SchemaSink(new MsgpackSink(FileSink.fromFile(file)))
 // const sink = new SchemaSink(new JsonSink(LineFileSink.fromFile(file)))
 // const sink = new SchemaSink(new CompressJsonSink(LineFileSink.fromFile(file)))
-const sink = new ContinuousCompressJsonSink(LineFileSink.fromFile(file))
+// const sink = new ContinuousCompressJsonSink(RawLineFileSink.fromFile(file))
+const sink = new UniqueValueSink(RawLineFileSink.fromFile(file))
 
 const n = sampleCount / 2
 let i = 0
