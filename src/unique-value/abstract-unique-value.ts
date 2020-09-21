@@ -19,9 +19,9 @@
  *   e.t.c.
  * (doesn't support Map, Set, Date, Symbol, bigint, e.t.c.)
  * */
-import { Sink, Source } from './pipe'
-import { checkUniqueTypes, Errors } from './utils'
-import { int_to_str, str_to_int } from './utils/base-62'
+import { Sink, Source } from '../pipe'
+import { checkUniqueTypes, Errors } from '../utils'
+import { int_to_str, str_to_int } from '../utils/base-62'
 
 const WORDS = {
   array: 'a',
@@ -35,65 +35,69 @@ const WORDS = {
   false: 'f',
 }
 checkUniqueTypes(WORDS)
-type Key = number
-type EncodeContext = {
-  sink: Sink<string>
-
-  // line -> key
-  linesKeys: Map<string, Key>
+export type Key = number
+export type Dict<K, V> = {
+  has(key: K): boolean
+  get(key: K): V | undefined
+  set(key: K, value: V): void
+  count(): number
 }
 
-function writeLine(context: EncodeContext, line: string): Key {
-  const linesKeys = context.linesKeys
-  if (linesKeys.has(line)) {
-    return linesKeys.get(line)!
+export type UniqueValueWriteLog = {
+  getKey(line: string): Key | null
+  write(line: string): Key
+  count(): number
+  close?: () => void
+}
+
+function writeLine(writeLog: UniqueValueWriteLog, line: string): Key {
+  console.log('writeLine', { line })
+  const key = writeLog.getKey(line)
+  console.log('writeLine', { key })
+  if (key !== null) {
+    return key
   }
-  const key = linesKeys.size
-  linesKeys.set(line, key)
-  context.sink.write(line)
-  return key
+  return writeLog.write(line)
 }
 
-function encode(context: EncodeContext, value: any): Key {
+function encode(writeLog: UniqueValueWriteLog, value: any): Key {
+  console.log('encode', { value })
   switch (value) {
     case null:
-      return writeLine(context, WORDS.null)
+      return writeLine(writeLog, WORDS.null)
     case undefined:
-      return writeLine(context, WORDS.undefined)
+      return writeLine(writeLog, WORDS.undefined)
     case true:
-      return writeLine(context, WORDS.true)
+      return writeLine(writeLog, WORDS.true)
     case false:
-      return writeLine(context, WORDS.false)
+      return writeLine(writeLog, WORDS.false)
   }
   if (Array.isArray(value)) {
     const values: string[] = value.map(value =>
-      int_to_str(encode(context, value)),
+      int_to_str(encode(writeLog, value)),
     )
-    return writeLine(context, WORDS.array + values.join(','))
+    return writeLine(writeLog, WORDS.array + values.join(','))
   }
   if (typeof value === 'object') {
     const keys: string[] = Object.keys(value).map((key: string) =>
-      int_to_str(encode(context, key)),
+      int_to_str(encode(writeLog, key)),
     )
     const values: string[] = Object.values(value).map((value: any) =>
-      int_to_str(encode(context, value)),
+      int_to_str(encode(writeLog, value)),
     )
-    return writeLine(context, WORDS.object + [...keys, ...values].join(','))
+    return writeLine(writeLog, WORDS.object + [...keys, ...values].join(','))
   }
-  return writeLine(context, WORDS.value + JSON.stringify(value))
+  return writeLine(writeLog, WORDS.value + JSON.stringify(value))
 }
 
-export class UniqueValueSink extends Sink<any> {
-  // line -> key
-  linesKeys = new Map<string, Key>()
-
-  constructor(public sink: Sink<string>) {
+export class AbstractUniqueValueSink extends Sink<any> {
+  constructor(public sink: UniqueValueWriteLog) {
     super()
   }
 
   write(data: any) {
-    const key = encode(this, data)
-    if (key === this.linesKeys.size - 1) {
+    const key = encode(this.sink, data)
+    if (key === this.sink.count() - 1) {
       this.sink.write(WORDS.pop)
     } else {
       this.sink.write(WORDS.emit + int_to_str(key))
@@ -101,13 +105,13 @@ export class UniqueValueSink extends Sink<any> {
   }
 
   close() {
-    this.sink.close()
+    this.sink.close?.()
   }
 }
 
 type DecodeContext = {
   // key -> line
-  lines: Map<Key, string>
+  lines: Dict<Key, string>
 }
 
 function decode(context: DecodeContext, line: string): any {
@@ -154,11 +158,10 @@ function decode(context: DecodeContext, line: string): any {
   }
 }
 
-export class UniqueValueSource extends Source<any> {
+export class AbstractUniqueValueSource extends Source<any> {
   generator?: Generator<any>
-  lines = new Map<Key, string>()
 
-  constructor(public source: Source<string>) {
+  constructor(public lines: Dict<Key, string>) {
     super()
   }
 
@@ -175,8 +178,12 @@ export class UniqueValueSource extends Source<any> {
 
   *iterator(options?: { autoClose?: boolean }): Generator<any> {
     const lines = this.lines
-    for (const line of this.source.iterator(options)) {
-      const key = lines.size
+    let count = this.lines.count()
+    console.log('source iterator', { count })
+    for (let i = 0; i < count; i++) {
+      const key = i + 1
+      const line = lines.get(key)!
+      console.log('source iterator', { key, line })
       if (line === WORDS.pop) {
         const lastKey = key - 1
         const lastLine = lines.get(lastKey)!
@@ -190,11 +197,9 @@ export class UniqueValueSource extends Source<any> {
         yield decode(this, dataLine)
         continue
       }
-      lines.set(key, line)
+      // lines.set(key, line)
     }
   }
 
-  close() {
-    this.source.close()
-  }
+  close() {}
 }
