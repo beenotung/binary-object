@@ -44,10 +44,10 @@ export type Dict<K, V> = {
 }
 
 export type UniqueValueWriteLog = {
+  close?: () => void
   getKey(line: string): Key | null
   write(line: string): Key
   count(): number
-  close?: () => void
 }
 
 function writeLine(writeLog: UniqueValueWriteLog, line: string): Key {
@@ -178,7 +178,7 @@ export class AbstractUniqueValueSource extends Source<any> {
 
   *iterator(options?: { autoClose?: boolean }): Generator<any> {
     const lines = this.lines
-    let count = this.lines.count()
+    const count = this.lines.count()
     console.log('source iterator', { count })
     for (let i = 0; i < count; i++) {
       const key = i + 1
@@ -201,5 +201,7 @@ export class AbstractUniqueValueSource extends Source<any> {
     }
   }
 
-  close() {}
+  close() {
+    // TODO close the dict?
+  }
 }
