@@ -1,6 +1,7 @@
-import { UniqueValueSink } from '../src'
+
 import { RawLineFileSink } from '../src/raw-line-file'
-import { iterateSamples, sampleCount } from './sample'
+import { LimitedUniqueValueSink } from '../src/unique-value'
+import { iterateSamples } from './sample'
 
 const file = 'db.log'
 
@@ -14,9 +15,14 @@ const file = 'db.log'
 // const sink = new SchemaSink(new JsonSink(LineFileSink.fromFile(file)))
 // const sink = new SchemaSink(new CompressJsonSink(LineFileSink.fromFile(file)))
 // const sink = new ContinuousCompressJsonSink(RawLineFileSink.fromFile(file))
-const sink = new UniqueValueSink(RawLineFileSink.fromFile(file))
+// const sink = new UniqueValueSink(RawLineFileSink.fromFile(file))
+const sink = new LimitedUniqueValueSink(RawLineFileSink.fromFile(file), {
+  maxSize: 1024 * 8,
+})
 
-const n = sampleCount / 2
+// const n = sampleCount / 2
+// const n = sampleCount
+const n = 15000
 let i = 0
 console.log({ n })
 for (const { key, value } of iterateSamples()) {

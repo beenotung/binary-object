@@ -19,11 +19,11 @@
  *   e.t.c.
  * (doesn't support Map, Set, Date, Symbol, bigint, e.t.c.)
  * */
-import { Sink, Source } from './pipe'
-import { checkUniqueTypes, Errors } from './utils'
-import { int_to_str, str_to_int } from './utils/base-62'
+import { Sink, Source } from '../pipe'
+import { checkUniqueTypes, Errors } from '../utils'
+import { int_to_str, str_to_int } from '../utils/base-62'
 
-const WORDS = {
+export const WORDS = {
   array: 'a',
   object: 'o',
   value: 'v',
@@ -35,7 +35,7 @@ const WORDS = {
   false: 'f',
 }
 checkUniqueTypes(WORDS)
-type Key = number
+export type Key = number
 type EncodeContext = {
   sink: Sink<string>
 
@@ -43,7 +43,7 @@ type EncodeContext = {
   linesKeys: Map<string, Key>
 }
 
-function writeLine(context: EncodeContext, line: string): Key {
+function writeLine(line: string, context: EncodeContext): Key {
   const linesKeys = context.linesKeys
   if (linesKeys.has(line)) {
     return linesKeys.get(line)!
@@ -54,33 +54,33 @@ function writeLine(context: EncodeContext, line: string): Key {
   return key
 }
 
-function encode(context: EncodeContext, value: any): Key {
+export function encode(value: any, writeLine: (line: string) => Key): Key {
   switch (value) {
     case null:
-      return writeLine(context, WORDS.null)
+      return writeLine(WORDS.null)
     case undefined:
-      return writeLine(context, WORDS.undefined)
+      return writeLine(WORDS.undefined)
     case true:
-      return writeLine(context, WORDS.true)
+      return writeLine(WORDS.true)
     case false:
-      return writeLine(context, WORDS.false)
+      return writeLine(WORDS.false)
   }
   if (Array.isArray(value)) {
     const values: string[] = value.map(value =>
-      int_to_str(encode(context, value)),
+      int_to_str(encode(value, writeLine)),
     )
-    return writeLine(context, WORDS.array + values.join(','))
+    return writeLine(WORDS.array + values.join(','))
   }
   if (typeof value === 'object') {
     const keys: string[] = Object.keys(value).map((key: string) =>
-      int_to_str(encode(context, key)),
+      int_to_str(encode(key, writeLine)),
     )
     const values: string[] = Object.values(value).map((value: any) =>
-      int_to_str(encode(context, value)),
+      int_to_str(encode(value, writeLine)),
     )
-    return writeLine(context, WORDS.object + [...keys, ...values].join(','))
+    return writeLine(WORDS.object + [...keys, ...values].join(','))
   }
-  return writeLine(context, WORDS.value + JSON.stringify(value))
+  return writeLine(WORDS.value + JSON.stringify(value))
 }
 
 export class UniqueValueSink extends Sink<any> {
@@ -92,7 +92,7 @@ export class UniqueValueSink extends Sink<any> {
   }
 
   write(data: any) {
-    const key = encode(this, data)
+    const key = encode(data, line => writeLine(line, this))
     if (key === this.linesKeys.size - 1) {
       this.sink.write(WORDS.pop)
     } else {
