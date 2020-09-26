@@ -1,8 +1,14 @@
 import { Sink } from '../pipe'
+import { checkUniqueTypes } from '../utils'
 import { int_to_str } from '../utils/base-62'
-// import {  newCache } from './weighted-cache'
-import { newCache } from './freq-cache'
-import { encode, WORDS } from './unique-value'
+import { newCache } from './cache'
+import { encode, WORDS as _WORDS } from './unique-value'
+
+const WORDS = {
+  ..._WORDS,
+  drop: 'd',
+}
+checkUniqueTypes(WORDS)
 
 export type Cache = ReturnType<typeof newCache>
 type EncodeContext = {
@@ -26,9 +32,12 @@ export class LimitedUniqueValueSink extends Sink<any> {
   cache: Cache
   lines = 0
 
-  constructor(public sink: Sink<string>, options: { maxSize: number }) {
+  constructor(options: { maxSize: number }, public sink: Sink<string>) {
     super()
-    this.cache = newCache(options)
+    this.cache = newCache({
+      maxSize: options.maxSize,
+      drop: key => this.sink.write(WORDS.drop + int_to_str(key)),
+    })
   }
 
   write(data: any) {

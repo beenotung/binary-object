@@ -132,5 +132,11 @@ data > unique-value > line-file
 | 59.26s read
 (estimated from 50% sample to avoid Out of Memory Error)
 
+?:
+data > schema > limited-unique-value > raw-line-file
+| 602M
+| 270.21s write
+| (failed to read)
+
 ## LICENSE
 [BSD-2-Clause](./LICENSE) (Free Open Sourced Software)

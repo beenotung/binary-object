@@ -60,9 +60,7 @@ export class LineFileSource extends Source<string> {
 
   *iterator(options?: { autoClose?: boolean }): Generator<string> {
     for (const line of iterateFdByLine(this.fd, this.options)) {
-      console.log({ line })
       const data = decode(line)
-      console.log({ data })
       yield data
     }
     if (options?.autoClose) {
