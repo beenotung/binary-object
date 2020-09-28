@@ -23,7 +23,6 @@ export class LineFileSink extends Sink<string> {
 }
 
 export class LineFileSource extends Source<string> {
-
   generator?: Generator<string>
   constructor(public fd: number) {
     super()

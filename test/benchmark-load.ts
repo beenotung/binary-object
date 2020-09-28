@@ -1,10 +1,14 @@
-import { BinaryJsonFileSource } from '../src'
+import { FileSource, SchemaSource } from '../src'
+import { BinaryCompressJsonSource } from '../src/binary-compress-json'
 import { sampleCount } from './sample'
 
 const file = 'db.log'
 
-const source = BinaryJsonFileSource.fromFile(file)
+// const source = BinaryJsonFileSource.fromFile(file)
 // const source = new SchemaSource(new BinaryJsonSource(FileSource.fromFile(file)))
+const source = new SchemaSource(
+  new BinaryCompressJsonSource(FileSource.fromFile(file)),
+)
 
 const n = sampleCount
 let i = 0

@@ -1,14 +1,16 @@
-import { BinaryJsonFileSink } from '../src'
+import { FileSink, SchemaSink } from '../src'
+import { BinaryCompressJsonSink } from '../src/binary-compress-json'
 import { iterateSamples, sampleCount } from './sample'
 
 const file = 'db.log'
 
 // const sink = BinaryObjectFileSink.fromFile(file)
 // const sink = new SchemaSink(new BinaryObjectSink(FileSink.fromFile(file)))
-const sink = BinaryJsonFileSink.fromFile(file)
+// const sink = BinaryJsonFileSink.fromFile(file)
 // const sink = new SchemaSink(new BinaryJsonSink(FileSink.fromFile(file)))
 // const sink = new MsgpackSink(FileSink.fromFile(file))
 // const sink = new SchemaSink(new MsgpackSink(FileSink.fromFile(file)))
+const sink = new SchemaSink(new BinaryCompressJsonSink(FileSink.fromFile(file)))
 
 const n = sampleCount
 let i = 0

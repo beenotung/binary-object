@@ -103,6 +103,10 @@ data > binary-json > file
 data > schema > binary-object > file
 (622M)
 
+== new ==
+data > schema > binary-compress-json > file
+373M
+=========
 
 fast, and a bit space-efficient:
 data > schema > binary-json > file
