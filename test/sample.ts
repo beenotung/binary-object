@@ -39,4 +39,6 @@ export function countSamples() {
   return lines / 2
 }
 
-export let sampleCount = 266430
+// for file size of 843M
+export let sampleCount = 266430 // on desktop
+sampleCount = 291119 // on laptop
