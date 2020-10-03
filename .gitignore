@@ -11,3 +11,4 @@ dist/
 res/
 log
 db.log
+db.sqlite3*
