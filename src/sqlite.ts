@@ -1,4 +1,3 @@
-import { Sink, Source } from '../pipe'
 import {
   countRows,
   createDB,
@@ -8,7 +7,8 @@ import {
   makeSelectRowFnFromSchema,
   SelectRowFn,
   TableSchema,
-} from './helpers'
+} from 'better-sqlite3-schema'
+import { Sink, Source } from './pipe'
 
 export type SqliteSinkOptions = {
   insertRowFn: InsertRowFn

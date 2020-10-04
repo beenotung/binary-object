@@ -1,18 +1,15 @@
-import { createDB, TableSchema } from '../src/sqlite/helpers'
+import { createDB, TableSchema } from 'better-sqlite3-schema'
 import {
   makeSqliteSinkOptions,
   makeSqliteSourceOptions,
   SqliteValueSink,
   SqliteValueSource,
-} from '../src/sqlite/sqlite'
+} from '../src/sqlite'
 import { jsonSample } from './sample-object'
-import './sqlite-utils'
-import { exportToSqlite } from './sqlite-utils'
 import { testSuit } from './test-utils'
 const file = 'db.sqlite3'
 
 describe('sqlite TestSuit', () => {
-  exportToSqlite()
   const db = createDB({ file, mode: 'overwrite' })
   const schema: TableSchema = {
     table: 'data',
