@@ -1,3 +1,6 @@
+/**
+ * a simplified (and pluggable) version of unique-value
+ * */
 import { Sink, Source } from './pipe'
 import { int_to_str, str_to_int } from './utils/base-62'
 
